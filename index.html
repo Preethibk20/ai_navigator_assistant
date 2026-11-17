@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrepFree AI Navigator — Ask. Find. Navigate.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-base: #090d12;
+      --bg-surface: #101620;
+      --bg-card: #151d2a;
+      --bg-card-hover: #1c2637;
+      --teal-primary: #10b981;
+      --teal-hover: #059669;
+      --teal-soft: rgba(16, 185, 129, 0.15);
+      --teal-border: rgba(16, 185, 129, 0.35);
+      --text-main: #f1f5f9;
+      --text-muted: #8b99ad;
+      --border-subtle: #202b3c;
+      --border-strong: #2e3d55;
+      --rail-width: 64px;
+      --topbar-height: 56px;
+      --spotlight-glow: 0 0 0 4px rgba(16, 185, 129, 0.5), 0 0 35px rgba(16, 185, 129, 0.85);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      line-height: 1.5;
+      overflow-x: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* Top Navigation Bar matching PrepFree dark design */
+    .top-nav {
+      height: var(--topbar-height);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px 0 14px;
+      z-index: 50;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-circle-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #00875a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -1px;
+      box-shadow: 0 2px 10px rgba(0, 135, 90, 0.4);
+      cursor: pointer;
+    }
+
+    .sidebar-toggle-btn {
+      color: #64748b;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 6px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .sidebar-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #64748b;
+    }
+
+    .breadcrumbs-wrap .crumb-root {
+      color: #94a3b8;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .breadcrumbs-wrap .crumb-root:hover {
+      color: #f1f5f9;
+    }
+
+    .breadcrumbs-wrap .crumb-active {
+      color: #f8fafc;
+      font-weight: 700;
+    }
+
+    .top-center-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #141c27;
+      border: 1px solid var(--border-subtle);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .top-center-hint:hover {
+      background: #1b2535;
+      border-color: #3b82f6;
+      color: #f1f5f9;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .top-action-icon {
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .top-action-icon:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-ask-ai {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, #10b981 0%, #0284c7 100%);
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-ask-ai:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
+    }
+
+    .user-avatar-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #d97706;
+      color: white;
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* App Layout */
+    .app-body {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - var(--topbar-height));
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left Icon Rail - NO NAMES VISIBLE (Matches PrepFree screenshot) */
+    .icon-rail {
+      width: var(--rail-width);
+      background: #090d13;
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 6px;
+      z-index: 40;
+      flex-shrink: 0;
+    }
+
+    .rail-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #718096;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+    }
+
+    .rail-btn svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.8;
+      transition: transform 0.15s ease;
+    }
+
+    .rail-btn:hover {
+      color: #e2e8f0;
+      background: #141c27;
+      border-color: #243042;
+    }
+
+    .rail-btn:hover svg {
+      transform: scale(1.08);
+    }
+
+    .rail-btn.active {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.14);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .rail-btn.active::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 12px;
+      bottom: 12px;
+      width: 3px;
+      background: #10b981;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .rail-divider {
+      width: 32px;
+      height: 1px;
+      background: #1a222e;
+      margin: 6px 0;
+    }
+
+    /* Rail Hover Label Tooltip (native hover) */
+    .rail-btn .hover-label {
+      position: absolute;
+      left: 54px;
+      top: 50%;
+      transform: translateY(-50%) translateX(-6px);
+      background: #1e2736;
+      color: #f1f5f9;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      border: 1px solid #2e3d55;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+      transition: all 0.15s ease;
+      z-index: 100;
+    }
+
+    .rail-btn:hover .hover-label {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    /* ================= SPOTLIGHT HIGHLIGHTING EFFECT ================= */
+    .rail-btn.spotlight-active {
+      z-index: 1050 !important;
+      background: #064e3b !important;
+      color: #34d399 !important;
+      border-color: #10b981 !important;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.45), 0 0 35px rgba(16, 185, 129, 0.85) !important;
+      animation: pulse-rail 1.6s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+
+    @keyframes pulse-rail {
+      0%, 100% {
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.45), 0 0 25px rgba(16, 185, 129, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.7), 0 0 45px rgba(16, 185, 129, 1);
+      }
+    }
+
+    .spotlight-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 12, 0.75);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .spotlight-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Floating Spotlight Tooltip pointing directly to the icon on the rail */
+    .spotlight-tooltip {
+      position: absolute;
+      left: 78px;
+      z-index: 1060;
+      width: 340px;
+      background: #141c28;
+      color: #f1f5f9;
+      border-radius: 14px;
+      padding: 16px 18px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(16, 185, 129, 0.3);
+      border: 1px solid #10b981;
+      animation: tooltipPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes tooltipPop {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .tooltip-arrow {
+      position: absolute;
+      left: -8px;
+      top: 20px;
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 8px solid #10b981;
+    }
+
+    .tooltip-arrow::after {
+      content: '';
+      position: absolute;
+      left: 1px;
+      top: -8px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 8px solid #141c28;
+    }
+
+    .tooltip-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #34d399;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
+
+    .tooltip-title {
+      font-weight: 700;
+      font-size: 16px;
+      color: #ffffff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tooltip-desc {
+      font-size: 12.5px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .tooltip-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-teal-sm {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-teal-sm:hover {
+      background: #059669;
+    }
+
+    .btn-dark-sm {
+      background: #1e2838;
+      color: #cbd5e1;
+      border-color: #2f3d53;
+    }
+
+    .btn-dark-sm:hover {
+      background: #28364b;
+      color: white;
+    }
+
+    /* Main Viewport Content */
+    .viewport-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px;
+      background: var(--bg-base);
+      position: relative;
+    }
+
+    .page-section {
+      display: none;
+      animation: fadeIn 0.2s ease;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero Session Card matching PrepFree UI Screenshot */
+    .session-hero-card {
+      background: radial-gradient(circle at 50% 30%, #1e2838 0%, #111722 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 44px 24px;
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Subtle wave line decoration from screenshot */
+    .session-hero-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .sparkle-icon-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 22px;
+    }
+
+    .hero-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      font-size: 13.5px;
+      color: #94a3b8;
+      max-width: 520px;
+      margin: 0 auto 22px;
+      line-height: 1.5;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn-hero-teal {
+      background: #10b981;
+      color: #ffffff;
+      border: none;
+      padding: 9px 24px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-hero-teal:hover {
+      background: #059669;
+    }
+
+    .btn-hero-dark {
+      background: #1a222e;
+      color: #cbd5e1;
+      border: 1px solid #293649;
+      padding: 9px 24px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-hero-dark:hover {
+      background: #232d3d;
+      color: #ffffff;
+    }
+
+    .section-heading-sm {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 14px;
+    }
+
+    /* Cards Grid */
+    .dark-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* Guidance Banner when Navigated by AI */
+    .ai-guidance-banner {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .ai-guidance-banner h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #34d399;
+      margin-bottom: 2px;
+    }
+
+    .ai-guidance-banner p {
+      font-size: 13px;
+      color: #a7f3d0;
+      line-height: 1.45;
+    }
+
+    /* ATS Checker Specific Styles */
+    .ats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .ats-grid { grid-template-columns: 1fr; }
+    }
+
+    .dark-upload-zone {
+      border: 2px dashed #28374d;
+      border-radius: 14px;
+      padding: 34px 20px;
+      text-align: center;
+      background: #0d131d;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dark-upload-zone:hover {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .upload-circle-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    }
+
+    /* Score Meter */
+    .score-meter-dark {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px;
+      background: #0d131d;
+      border-radius: 12px;
+      border: 1px solid #1c2738;
+      margin-bottom: 18px;
+    }
+
+    .score-circle-dark {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: conic-gradient(#10b981 0% 84%, #1e2838 84% 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .score-circle-inner-dark {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #141c28;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 17px;
+      color: #34d399;
+    }
+
+    /* Diagnostic Checklist */
+    .diag-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #1c2738;
+      font-size: 13px;
+    }
+
+    .diag-icon {
+      color: #10b981;
+      margin-top: 1px;
+    }
+
+    /* ================= FLOATING AI NAVIGATOR ================= */
+    .ai-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 990;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #10b981 0%, #0369a1 100%);
+      color: white;
+      padding: 11px 18px 11px 13px;
+      border-radius: 999px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(16, 185, 129, 0.4);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .ai-fab:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 14px 30px rgba(16, 185, 129, 0.5);
+    }
+
+    .ai-fab-sparkle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .ai-fab-pulse {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid rgba(16, 185, 129, 0.8);
+      animation: ripple 2s infinite ease-out;
+    }
+
+    @keyframes ripple {
+      0% { transform: scale(0.9); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* Assistant Chat Window */
+    .assistant-window {
+      position: fixed;
+      bottom: 82px;
+      right: 24px;
+      width: 440px;
+      max-width: calc(100vw - 32px);
+      height: 620px;
+      max-height: calc(100vh - 100px);
+      background: #111722;
+      border: 1px solid #233044;
+      border-radius: 18px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      z-index: 995;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(20px) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .assistant-window.open {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .assistant-header {
+      padding: 14px 18px;
+      background: #0b0f17;
+      border-bottom: 1px solid #1c2738;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .assistant-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .assistant-logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .assistant-title-group h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .assistant-status {
+      font-size: 11px;
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-dot-green {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    .header-ctrls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-ctrl {
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-ctrl:hover {
+      background: #1e2838;
+      color: #f1f5f9;
+    }
+
+    .assistant-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #0f141e;
+    }
+
+    .msg-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-width: 92%;
+    }
+
+    .msg-group.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .msg-group.assistant {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .msg-bubble {
+      padding: 12px 15px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .msg-group.user .msg-bubble {
+      background: #10b981;
+      color: #ffffff;
+      border-bottom-right-radius: 3px;
+    }
+
+    .msg-group.assistant .msg-bubble {
+      background: #17202d;
+      color: #e2e8f0;
+      border: 1px solid #253347;
+      border-bottom-left-radius: 3px;
+    }
+
+    .msg-time {
+      font-size: 10.5px;
+      color: #64748b;
+      padding: 0 4px;
+    }
+
+    /* Intent Recognition Breakdown Card */
+    .intent-card-dark {
+      background: #141c28;
+      border: 1px solid #223247;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 4px;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .intent-header-dark {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .intent-label-tag {
+      color: #38bdf8;
+      font-weight: 700;
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .confidence-pill {
+      font-size: 10.5px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .intent-prop {
+      display: flex;
+      margin-bottom: 4px;
+    }
+
+    .prop-name {
+      width: 100px;
+      color: #8da2bb;
+    }
+
+    .prop-val {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .path-token {
+      background: #0b0f17;
+      border: 1px solid #233044;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: #38bdf8;
+    }
+
+    .chat-action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-chat-highlight {
+      background: #1c2637;
+      border: 1px solid #2e3e57;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-chat-highlight:hover {
+      background: #27364e;
+      border-color: #3b82f6;
+    }
+
+    .btn-chat-nav {
+      background: #10b981;
+      border: 1px solid #10b981;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-chat-nav:hover {
+      background: #059669;
+    }
+
+    /* Quick Suggestions Bar */
+    .suggestions-scroll {
+      padding: 8px 12px;
+      background: #0c1017;
+      border-top: 1px solid #1a2330;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .suggestions-scroll::-webkit-scrollbar { display: none; }
+
+    .sugg-chip {
+      background: #151c27;
+      border: 1px solid #243144;
+      color: #cbd5e1;
+      font-size: 11.5px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .sugg-chip:hover {
+      background: #1d2737;
+      border-color: #3b82f6;
+      color: #ffffff;
+    }
+
+    /* Footer Prompt Field */
+    .assistant-foot {
+      padding: 12px 14px;
+      background: #0b0f17;
+      border-top: 1px solid #1c2738;
+    }
+
+    .prompt-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: #141c28;
+      border: 1.5px solid #26354b;
+      border-radius: 10px;
+      padding: 10px 40px 10px 12px;
+      font-family: inherit;
+      font-size: 12.5px;
+      color: #f1f5f9;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-send-plane {
+      position: absolute;
+      right: 5px;
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: #10b981;
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .btn-send-plane:hover {
+      background: #059669;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar matching PrepFree UI Screenshot -->
+  <header class="top-nav">
+    <div class="top-left">
+      <!-- Green 'e' circle logo -->
+      <div class="brand-circle-logo" onclick="navigateTo('dashboard')" title="PrepFree Home">e</div>
+      
+      <!-- Split panel sidebar toggle button -->
+      <button class="sidebar-toggle-btn" title="Sidebar toggle">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+      </button>
+
+      <!-- Breadcrumbs: Main > [Current Feature] -->
+      <div class="breadcrumbs-wrap">
+        <span class="crumb-root" onclick="navigateTo('dashboard')">Main</span>
+        <span>&rsaquo;</span>
+        <span class="crumb-active" id="activeBreadcrumbText">Dashboard</span>
+      </div>
+    </div>
+
+    <!-- Center Search / AI Navigator Trigger -->
+    <div class="top-center-hint" onclick="openAssistantWithFocus()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <span>Can't find a feature? Ask PrepFree AI Navigator (Ctrl+K)</span>
+    </div>
+
+    <!-- Top Right Actions -->
+    <div class="top-right">
+      <button class="btn-ask-ai" onclick="toggleAssistant()">
+        <span>✦</span>
+        <span>AI Navigator</span>
+      </button>
+
+      <button class="top-action-icon" title="Search">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </button>
+
+      <button class="top-action-icon" title="Notifications">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </button>
+
+      <div class="user-avatar-circle" title="Student Profile">RS</div>
+    </div>
+  </header>
+
+  <!-- App Body Layout -->
+  <div class="app-body">
+
+    <!-- Spotlight Dimmer Overlay -->
+    <div class="spotlight-backdrop" id="spotlightBackdrop" onclick="clearSpotlight()"></div>
+
+    <!-- Spotlight Floating Tooltip pointing directly to the highlighted icon on the rail -->
+    <div class="spotlight-tooltip" id="spotlightTooltip" style="display: none;">
+      <div class="tooltip-arrow"></div>
+      <div class="tooltip-tag">
+        <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+        <span id="tooltipBadge">Located Feature</span>
+      </div>
+      <div class="tooltip-title" id="tooltipTitle">ATS Checker</div>
+      <div class="tooltip-desc" id="tooltipDesc">
+        Scan your resume against ATS algorithms to find keyword gaps, formatting flags, and score match percentage.
+      </div>
+      <div class="tooltip-actions">
+        <button class="btn-sm btn-teal-sm" id="tooltipNavBtn" onclick="executeGuidedNavFromTooltip()">
+          <span>Take me there</span>
+          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+        <button class="btn-sm btn-dark-sm" onclick="clearSpotlight()">Got it</button>
+      </div>
+    </div>
+
+    <!-- ================= LEFT ICON RAIL: NO NAMES VISIBLE (Matches Screenshot) ================= -->
+    <aside class="icon-rail" id="iconRail" aria-label="Student Navigation Rail">
+      
+      <!-- 1. Dashboard (4 squares grid) -->
+      <button class="rail-btn active" id="rail-dashboard" onclick="navigateTo('dashboard');" title="Dashboard">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span class="hover-label">Dashboard</span>
+      </button>
+
+      <!-- 2. Jobs (Briefcase) -->
+      <button class="rail-btn" id="rail-jobs" onclick="navigateTo('jobs');" title="Jobs">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span class="hover-label">Jobs & Internships</span>
+      </button>
+
+      <!-- 3. Resume Builder (Document with 'A') -->
+      <button class="rail-btn" id="rail-resume" onclick="navigateTo('resume');" title="Resume Builder">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <span class="hover-label">Resume Builder</span>
+      </button>
+
+      <!-- 4. ATS Checker (Circular arrows / sync icon from screenshot) -->
+      <button class="rail-btn" id="rail-ats" onclick="navigateTo('ats');" title="ATS Checker">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        <span class="hover-label">ATS Checker</span>
+      </button>
+
+      <!-- 5. Courses (Graduation cap) -->
+      <button class="rail-btn" id="rail-courses" onclick="navigateTo('courses');" title="JBP Courses">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+        <span class="hover-label">JBP Courses</span>
+      </button>
+
+      <!-- 6. Webinars (Video camera) -->
+      <button class="rail-btn" id="rail-webinars" onclick="navigateTo('webinars');" title="Webinars">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <span class="hover-label">Webinars & Masterclasses</span>
+      </button>
+
+      <!-- 7. Connect / Community (Two people) -->
+      <button class="rail-btn" id="rail-connect" onclick="navigateTo('connect');" title="Connect">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span class="hover-label">Connect & Mentors</span>
+      </button>
+
+      <!-- 8. AI Mock Interview (Bot / Robot head) -->
+      <button class="rail-btn" id="rail-interview" onclick="navigateTo('interview');" title="AI Interview">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span class="hover-label">AI Mock Interview</span>
+      </button>
+
+      <div class="rail-divider"></div>
+
+      <!-- Settings / Sliders -->
+      <button class="rail-btn" title="Settings" onclick="alert('Settings view')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        <span class="hover-label">Platform Settings</span>
+      </button>
+    </aside>
+
+    <!-- ================= MAIN VIEWPORT ================= -->
+    <main class="viewport-main" id="viewportScroll">
+
+      <!-- ================= 1. DASHBOARD / RESUME SESSION VIEW (MATCHES SCREENSHOT) ================= -->
+      <section class="page-section active" id="view-dashboard">
+        <!-- Hero Session Card matching exact UI Screenshot -->
+        <div class="session-hero-card">
+          <div class="sparkle-icon-circle">✦</div>
+          <h2 class="hero-title">Resume Session in Progress</h2>
+          <p class="hero-subtitle">
+            You were in the middle of building a resume. Would you like to continue where you left off, or start a new session?
+          </p>
+          <div class="hero-actions">
+            <button class="btn-hero-teal" onclick="navigateTo('resume')">Continue</button>
+            <button class="btn-hero-dark" onclick="navigateTo('resume')">Start Over</button>
+          </div>
+        </div>
+
+        <div class="section-heading-sm">My Resumes & Tools</div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+          <!-- Card 1: ATS Checker -->
+          <div class="dark-card" style="cursor: pointer;" onclick="navigateTo('ats')">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <div style="color: #10b981; font-size: 18px;">🔄</div>
+              <strong style="color: #fff; font-size: 14.5px;">ATS Checker</strong>
+            </div>
+            <p style="font-size: 12.5px; color: #94a3b8; line-height: 1.45;">Upload an existing resume to test ATS score and keyword gaps against jobs.</p>
+            <div style="margin-top: 12px; font-size: 12px; color: #10b981; font-weight: 600;">Open ATS Checker &rarr;</div>
+          </div>
+
+          <!-- Card 2: AI Mock Interview -->
+          <div class="dark-card" style="cursor: pointer;" onclick="navigateTo('interview')">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <div style="color: #38bdf8; font-size: 18px;">💻</div>
+              <strong style="color: #fff; font-size: 14.5px;">AI Mock Interview</strong>
+            </div>
+            <p style="font-size: 12.5px; color: #94a3b8; line-height: 1.45;">Practice live behavioral & technical mock interviews with instant AI feedback.</p>
+            <div style="margin-top: 12px; font-size: 12px; color: #38bdf8; font-weight: 600;">Launch Interview Room &rarr;</div>
+          </div>
+
+          <!-- Card 3: Jobs & Matching -->
+          <div class="dark-card" style="cursor: pointer;" onclick="navigateTo('jobs')">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <div style="color: #f59e0b; font-size: 18px;">💼</div>
+              <strong style="color: #fff; font-size: 14.5px;">Jobs & Internships</strong>
+            </div>
+            <p style="font-size: 12.5px; color: #94a3b8; line-height: 1.45;">Explore 28+ verified entry-level software openings matched to your skills.</p>
+            <div style="margin-top: 12px; font-size: 12px; color: #f59e0b; font-weight: 600;">Browse Matched Jobs &rarr;</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. ATS CHECKER VIEW ================= -->
+      <section class="page-section" id="view-ats">
+        <div class="ai-guidance-banner" id="atsArrivalBanner" style="display: none;">
+          <div style="color: #10b981; font-size: 20px;">✓</div>
+          <div>
+            <h4>You've arrived at ATS Checker!</h4>
+            <p>
+              Here you can upload your existing resume (PDF/DOCX) and optionally paste a target Job Description to simulate how Applicant Tracking Systems evaluate your application.
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-size: 22px; font-weight: 700; color: #ffffff;">ATS Resume Checker</h2>
+          <p style="color: #94a3b8; font-size: 13.5px;">Test your resume against applicant tracking algorithms before applying to jobs.</p>
+        </div>
+
+        <div class="ats-grid">
+          <!-- Left: Upload & JD -->
+          <div class="dark-card">
+            <div style="font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 12px;">1. Upload Your Resume File</div>
+            
+            <div class="dark-upload-zone" onclick="document.getElementById('hiddenResumeFile').click()">
+              <input type="file" id="hiddenResumeFile" accept=".pdf,.docx" style="display: none;" onchange="handleFileChosen(this)">
+              <div class="upload-circle-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              </div>
+              <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;" id="uploadHeader">Upload your resume</div>
+              <div style="font-size: 12.5px; color: #94a3b8; margin-bottom: 14px;" id="uploadSubHeader">Choose a PDF or DOCX file (Max 5MB)</div>
+              <button type="button" class="btn-sm btn-dark-sm">Select file from device</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 14px;">
+              <button type="button" class="btn-sm btn-dark-sm" onclick="loadSampleResume()" style="background:#14231e; border-color:#1c4033; color:#34d399;">
+                <span>✦ Load Sample: "Rahul_Sharma_FullStack.pdf"</span>
+              </button>
+            </div>
+
+            <div style="margin-top: 22px; padding-top: 18px; border-top: 1px solid #1c2738;">
+              <div style="font-size: 13.5px; font-weight: 700; color: #fff; margin-bottom: 6px;">2. Optional: Target Job Description</div>
+              <textarea id="targetJdInput" rows="3" style="width: 100%; background: #0d131d; border: 1px solid #28374d; border-radius: 8px; padding: 10px; color: #f1f5f9; font-size: 12.5px; outline: none;" placeholder="Paste job requirements to check keyword overlap..."></textarea>
+            </div>
+          </div>
+
+          <!-- Right: Diagnostic Score -->
+          <div class="dark-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <strong style="color: #fff; font-size: 15px;">ATS Compatibility Score</strong>
+              <span style="font-size: 11px; background: rgba(16,185,129,0.15); color: #34d399; padding: 2px 8px; border-radius: 999px;">Parser v4.2</span>
+            </div>
+
+            <div class="score-meter-dark">
+              <div class="score-circle-dark">
+                <div class="score-circle-inner-dark" id="scoreValueText">84%</div>
+              </div>
+              <div>
+                <h4 style="font-size: 14.5px; font-weight: 700; color: #ffffff;" id="scoreStatusHeading">Strong ATS Match</h4>
+                <p style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Your resume layout passes Workday, Taleo, and Greenhouse parsers cleanly.</p>
+              </div>
+            </div>
+
+            <div class="diag-item">
+              <span class="diag-icon">✓</span>
+              <div>
+                <strong style="color: #fff;">Single-Column Structure:</strong>
+                <span style="color: #94a3b8;"> No complex sidebars or multi-column grids that confuse parsing engines.</span>
+              </div>
+            </div>
+
+            <div class="diag-item">
+              <span class="diag-icon">✓</span>
+              <div>
+                <strong style="color: #fff;">Detected Core Sections:</strong>
+                <span style="color: #94a3b8;"> Experience, Education, Projects, and Skills parsed accurately.</span>
+              </div>
+            </div>
+
+            <div class="diag-item">
+              <span class="diag-icon" style="color: #f59e0b;">!</span>
+              <div>
+                <strong style="color: #fff;">Keyword Gap Suggestions:</strong>
+                <span style="color: #94a3b8;"> Add "REST API integration", "Jest testing", and "Docker deployment".</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. RESUME BUILDER VIEW ================= -->
+      <section class="page-section" id="view-resume">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-size: 22px; font-weight: 700; color: #ffffff;">Resume Builder</h2>
+          <p style="color: #94a3b8; font-size: 13.5px;">Draft and edit recruiter-ready tech resumes using vetted templates.</p>
+        </div>
+        <div class="dark-card" style="text-align: center; padding: 40px 20px;">
+          <div style="font-size: 36px; margin-bottom: 10px;">📄</div>
+          <h3 style="font-size: 17px; font-weight: 700; color: #ffffff; margin-bottom: 6px;">Draft: Software Development Engineer</h3>
+          <p style="font-size: 13px; color: #94a3b8; max-width: 480px; margin: 0 auto 18px;">
+            Single-column standard tech template. To test its ATS compatibility, run it through the ATS Checker.
+          </p>
+          <button class="btn-sm btn-teal-sm" onclick="navigateTo('ats')">Run ATS Check on this draft &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ================= 4. JOBS VIEW ================= -->
+      <section class="page-section" id="view-jobs">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-size: 22px; font-weight: 700; color: #ffffff;">Jobs & Internships</h2>
+          <p style="color: #94a3b8; font-size: 13.5px;">Curated software roles matched to your verified skills.</p>
+        </div>
+        <div class="dark-card" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <strong style="color: #fff; font-size: 15px;">Frontend Engineer Intern</strong>
+              <span style="font-size: 11px; background: rgba(16,185,129,0.15); color: #34d399; padding: 1px 7px; border-radius: 999px;">94% Match</span>
+            </div>
+            <p style="font-size: 12.5px; color: #94a3b8;">Razorpay · Bangalore / Hybrid · React & TypeScript</p>
+          </div>
+          <button class="btn-sm btn-teal-sm" onclick="alert('Demo: Job application view.')">View Role</button>
+        </div>
+      </section>
+
+      <!-- ================= 5. AI INTERVIEW VIEW ================= -->
+      <section class="page-section" id="view-interview">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-size: 22px; font-weight: 700; color: #ffffff;">AI Mock Interview Room</h2>
+          <p style="color: #94a3b8; font-size: 13.5px;">Interactive simulation with real-time question generation and feedback.</p>
+        </div>
+        <div class="dark-card" style="text-align: center; padding: 36px 20px;">
+          <div style="font-size: 36px; margin-bottom: 10px;">🎤</div>
+          <h3 style="font-size: 17px; font-weight: 700; color: #ffffff; margin-bottom: 6px;">Select Interview Track</h3>
+          <p style="font-size: 13px; color: #94a3b8; max-width: 480px; margin: 0 auto 18px;">
+            Practice Frontend, Backend, System Design, or HR Behavioral questions with voice interaction.
+          </p>
+          <button class="btn-sm btn-teal-sm" onclick="alert('Demo: Starting mock interview session.')">Start Frontend Mock Session</button>
+        </div>
+      </section>
+
+      <!-- ================= 6. COURSES & WEBINARS VIEW ================= -->
+      <section class="page-section" id="view-courses">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-size: 22px; font-weight: 700; color: #ffffff;">JBP Courses & Cohorts</h2>
+          <p style="color: #94a3b8; font-size: 13.5px;">Your Job Bridge Program bootcamps, modules, and project milestones.</p>
+        </div>
+        <div class="dark-card">
+          <strong style="color: #fff; font-size: 15px;">Full-Stack Web Engineering (Cohort 12)</strong>
+          <p style="font-size: 12.5px; color: #94a3b8; margin: 4px 0 10px;">Module 4: Advanced Database Design & Prisma ORM · 68% Completed</p>
+          <button class="btn-sm btn-teal-sm" onclick="alert('Demo: Opening course lesson.')">Continue Module</button>
+        </div>
+      </section>
+
+      <!-- ================= 7. WEBINARS VIEW ================= -->
+      <section class="page-section" id="view-webinars">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-size: 22px; font-weight: 700; color: #ffffff;">Live Webinars & Masterclasses</h2>
+          <p style="color: #94a3b8; font-size: 13.5px;">Upcoming sessions with engineering leaders and recruiter AMAs.</p>
+        </div>
+        <div class="dark-card">
+          <span style="font-size: 10.5px; background: #ef4444; color: white; padding: 2px 7px; border-radius: 4px; font-weight: 700;">TODAY · 7:00 PM IST</span>
+          <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin: 6px 0 2px;">Mastering System Design for SDE-1 Interviews</h3>
+          <p style="font-size: 12.5px; color: #94a3b8; margin-bottom: 12px;">Speaker: Senior Staff Engineer @ Google · 950 students registered</p>
+          <button class="btn-sm btn-teal-sm" onclick="alert('Demo: Joined stream.')">Join Stream</button>
+        </div>
+      </section>
+
+      <!-- ================= 8. CONNECT VIEW ================= -->
+      <section class="page-section" id="view-connect">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-size: 22px; font-weight: 700; color: #ffffff;">PrepFree Connect & Mentors</h2>
+          <p style="color: #94a3b8; font-size: 13.5px;">Book 1-on-1 mentorship sessions with verified alumni.</p>
+        </div>
+        <div class="dark-card" style="text-align: center; padding: 36px 20px;">
+          <div style="font-size: 36px; margin-bottom: 10px;">🤝</div>
+          <h3 style="font-size: 17px; font-weight: 700; color: #ffffff; margin-bottom: 6px;">Connect with 120+ Mentors</h3>
+          <button class="btn-sm btn-teal-sm" onclick="alert('Demo: Mentorship bookings list.')">Browse Mentors</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= FLOATING AI BUTTON ================= -->
+  <div class="ai-fab" id="aiFab" onclick="toggleAssistant()" title="Ask PrepFree AI Navigator (Ctrl+K)">
+    <div class="ai-fab-sparkle">
+      <div class="ai-fab-pulse"></div>
+      <span>✦</span>
+    </div>
+    <div style="font-weight: 700; font-size: 13px;">AI Navigator</div>
+  </div>
+
+  <!-- ================= FLOATING ASSISTANT DRAWER ================= -->
+  <aside class="assistant-window" id="assistantWindow" aria-label="AI Navigation Assistant">
+    <div class="assistant-header">
+      <div class="assistant-meta">
+        <div class="assistant-logo-badge">✦</div>
+        <div class="assistant-title-group">
+          <h3>PrepFree AI Navigator</h3>
+          <div class="assistant-status">
+            <span class="status-dot-green"></span>
+            <span>Ask · Find · Navigate</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-ctrls">
+        <button class="btn-ctrl" onclick="resetConversation()" title="Reset chat">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+        <button class="btn-ctrl" onclick="toggleAssistant()" title="Close">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="assistant-body" id="chatBody">
+      <div class="msg-group assistant">
+        <div class="msg-bubble">
+          👋 <strong>Hey Rahul!</strong> Notice that the left sidebar only shows icons without feature names? That's why I'm here!
+          <br><br>
+          Ask me in your own words where any tool is located. I'll identify the icon, spotlight it with a pulse and tooltip, or guide you directly there!
+        </div>
+        <span class="msg-time">PrepFree AI · Just now</span>
+      </div>
+    </div>
+
+    <!-- Quick Suggestions Bar (Exact 5 Questions) -->
+    <div class="suggestions-scroll" id="suggestionsBar">
+      <button type="button" class="sugg-chip" onclick="handleSuggestionClick('I\'m not able to find ATS Checker. Can you help me?')">
+        "I'm not able to find ATS Checker. Can you help me?"
+      </button>
+      <button type="button" class="sugg-chip" onclick="handleSuggestionClick('Where can I upload my resume?')">
+        "Where can I upload my resume?"
+      </button>
+      <button type="button" class="sugg-chip" onclick="handleSuggestionClick('I want to find jobs suitable for my skills.')">
+        "I want to find jobs suitable for my skills."
+      </button>
+      <button type="button" class="sugg-chip" onclick="handleSuggestionClick('How do I access the AI Interview feature?')">
+        "How do I access the AI Interview feature?"
+      </button>
+      <button type="button" class="sugg-chip" onclick="handleSuggestionClick('Where can I find my courses and webinars?')">
+        "Where can I find my courses and webinars?"
+      </button>
+    </div>
+
+    <!-- Footer Input Field with exact requested placeholder -->
+    <div class="assistant-foot">
+      <form class="prompt-box" onsubmit="handleChatSubmit(event)">
+        <input 
+          type="text" 
+          id="chatPromptField" 
+          class="chat-input" 
+          placeholder="Hey! What are you looking for on PrepFree? Ask me anything about navigating the platform."
+          autocomplete="off"
+        >
+        <button type="submit" class="btn-send-plane" title="Send">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    /*
+     * PrepFree AI Navigator
+     * Designed for PrepFree's Icon-Only Left Rail Navigation
+     */
+
+    const PREPFREE_REGISTRY = {
+      ats: {
+        id: 'ats',
+        name: 'ATS Checker',
+        navPath: 'Dashboard → Left Sidebar (4th icon: Sync 🔄) → ATS Checker',
+        railButtonId: 'rail-ats',
+        targetView: 'ats',
+        badge: 'Resume Tools',
+        breadcrumb: 'ATS Checker',
+        intentSummary: 'Check resume compatibility with ATS algorithms',
+        description: 'Scan your resume against ATS algorithms to find keyword gaps, formatting issues, and test compatibility against job descriptions.',
+        explanationText: "Of course! You can find ATS Checker in your dashboard's left-side menu, just below Resume Builder (it's the 4th icon with circular arrows 🔄). Would you like me to show you where it is?",
+        destinationGuidance: "You're now at ATS Checker! You can upload your resume (PDF/DOCX) or try a sample resume to review ATS scoring. You may also paste a target job description for customized keyword matching."
+      },
+      resume: {
+        id: 'resume',
+        name: 'Resume Builder',
+        navPath: 'Dashboard → Left Sidebar (3rd icon: Document 📄) → Resume Builder',
+        railButtonId: 'rail-resume',
+        targetView: 'resume',
+        badge: 'Resume Tools',
+        breadcrumb: 'Resume Builder',
+        intentSummary: 'Draft and edit tech resumes',
+        description: 'Build recruiter-approved resumes using vetted tech templates and bullet-point analyzers.',
+        explanationText: "You can find Resume Builder in the left sidebar menu (3rd icon with the document symbol 📄, just above ATS Checker). Would you like me to highlight it or take you there?",
+        destinationGuidance: "Welcome to Resume Builder! Here you can draft and edit your tech resume with automated formatting guidelines."
+      },
+      jobs: {
+        id: 'jobs',
+        name: 'Jobs & Internships',
+        navPath: 'Dashboard → Left Sidebar (2nd icon: Briefcase 💼) → Jobs & Internships',
+        railButtonId: 'rail-jobs',
+        targetView: 'jobs',
+        badge: 'Job Board',
+        breadcrumb: 'Jobs & Internships',
+        intentSummary: 'Find jobs and internships matching candidate skills',
+        description: 'Discover entry-level roles scored directly against your verified technical skills.',
+        explanationText: "You can access Jobs & Internships from the left menu (2nd icon with the briefcase 💼, right below Dashboard). Would you like me to highlight it or take you there?",
+        destinationGuidance: "Welcome to Jobs & Internships! Here you will find listings with your personal skill-match score clearly indicated."
+      },
+      interview: {
+        id: 'interview',
+        name: 'AI Mock Interview',
+        navPath: 'Dashboard → Left Sidebar (8th icon: Robot 💻) → AI Interview',
+        railButtonId: 'rail-interview',
+        targetView: 'interview',
+        badge: 'Practice Suite',
+        breadcrumb: 'AI Mock Interview',
+        intentSummary: 'Practice technical & behavioral interviews with AI',
+        description: 'Practice real-time interactive technical and HR interviews with speech analysis and instant scoring.',
+        explanationText: "The AI Interview practice suite is located in your left-hand menu (the robot screen icon 💻). Would you like me to highlight it or take you directly to the interview room?",
+        destinationGuidance: "Welcome to the AI Mock Interview room! Select a practice track (Frontend, Backend, System Design, or HR) to start practicing."
+      },
+      courses: {
+        id: 'courses',
+        name: 'JBP Courses',
+        navPath: 'Dashboard → Left Sidebar (5th icon: Graduation Cap 🎓) → JBP Courses',
+        railButtonId: 'rail-courses',
+        targetView: 'courses',
+        badge: 'Learning Paths',
+        breadcrumb: 'JBP Courses',
+        intentSummary: 'Access Job Bridge Program courses and bootcamp lessons',
+        description: 'Track weekly modules, live coding labs, and mentor milestones for the Job Bridge Program.',
+        explanationText: "You can find your JBP Courses in the left navigation sidebar (5th icon with the graduation cap 🎓). Would you like me to highlight it or take you to your lessons?",
+        destinationGuidance: "You are now at your JBP Courses dashboard. You can continue with your active cohort lessons and assignments."
+      },
+      webinars: {
+        id: 'webinars',
+        name: 'Webinars & Masterclasses',
+        navPath: 'Dashboard → Left Sidebar (6th icon: Video Camera 📹) → Webinars',
+        railButtonId: 'rail-webinars',
+        targetView: 'webinars',
+        badge: 'Events',
+        breadcrumb: 'Webinars & Events',
+        intentSummary: 'Find live webinars and alumni AMA sessions',
+        description: 'Join live tech workshops, resume teardowns, and placement prep masterclasses with industry engineers.',
+        explanationText: "Webinars and live masterclasses are located in your left menu (6th icon with the video camera 📹). Would you like me to highlight it or open the schedule?",
+        destinationGuidance: "You've arrived at Webinars & Events! Check upcoming masterclasses and register for today's live sessions."
+      },
+      connect: {
+        id: 'connect',
+        name: 'Connect & Mentors',
+        navPath: 'Dashboard → Left Sidebar (7th icon: Two People 👥) → Connect',
+        railButtonId: 'rail-connect',
+        targetView: 'connect',
+        badge: 'Community',
+        breadcrumb: 'Connect & Mentors',
+        intentSummary: 'Connect with alumni mentors and industry peers',
+        description: 'Book 1-on-1 mentorship sessions for mock interviews, career guidance, and referral discussions.',
+        explanationText: "You can find Connect & Mentors in your left sidebar (7th icon with the people symbol 👥). Would you like me to highlight it or take you there?",
+        destinationGuidance: "Welcome to PrepFree Connect! Browse alumni mentors across top tech companies."
+      }
+    };
+
+    let activePage = 'dashboard';
+    let isDrawerOpen = false;
+    let activeSpotlightKey = null;
+
+    const assistantWindow = document.getElementById('assistantWindow');
+    const chatBody = document.getElementById('chatBody');
+    const chatPromptField = document.getElementById('chatPromptField');
+    const spotlightBackdrop = document.getElementById('spotlightBackdrop');
+    const spotlightTooltip = document.getElementById('spotlightTooltip');
+    const activeBreadcrumbText = document.getElementById('activeBreadcrumbText');
+
+    function toggleAssistant() {
+      isDrawerOpen = !isDrawerOpen;
+      if (isDrawerOpen) {
+        assistantWindow.classList.add('open');
+        setTimeout(() => chatPromptField.focus(), 250);
+      } else {
+        assistantWindow.classList.remove('open');
+        clearSpotlight();
+      }
+    }
+
+    function openAssistantWithFocus() {
+      if (!isDrawerOpen) toggleAssistant();
+      setTimeout(() => chatPromptField.focus(), 300);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        toggleAssistant();
+      }
+      if (e.key === 'Escape') {
+        if (activeSpotlightKey) clearSpotlight();
+        else if (isDrawerOpen) toggleAssistant();
+      }
+    });
+
+    function handleChatSubmit(e) {
+      if (e) e.preventDefault();
+      const q = chatPromptField.value.trim();
+      if (!q) return;
+
+      addUserBubble(q);
+      chatPromptField.value = '';
+
+      setTimeout(() => {
+        respondToQuery(q);
+      }, 500);
+    }
+
+    function handleSuggestionClick(text) {
+      chatPromptField.value = text;
+      handleChatSubmit();
+    }
+
+    function addUserBubble(text) {
+      const g = document.createElement('div');
+      g.className = 'msg-group user';
+      g.innerHTML = `<div class="msg-bubble">${escapeHtml(text)}</div><span class="msg-time">You · Just now</span>`;
+      chatBody.appendChild(g);
+      scrollChat();
+    }
+
+    function scrollChat() {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function escapeHtml(t) {
+      const d = document.createElement('div');
+      d.textContent = t;
+      return d.innerHTML;
+    }
+
+    function respondToQuery(q) {
+      const lower = q.toLowerCase();
+      let matchedKey = null;
+      let confidence = '98%';
+      let customExplanation = null;
+      let customIntent = null;
+
+      // Question 2: "Where can I upload my resume?"
+      if (lower.includes('upload')) {
+        matchedKey = 'ats';
+        confidence = '98% Intent Match';
+        customIntent = 'Upload resume file (PDF/DOCX) for ATS scanning';
+        customExplanation = "On PrepFree, the sidebar only shows icons and there is no standalone 'Upload' button. The resume upload area is located inside the <strong>ATS Checker</strong> (4th icon with circular arrows 🔄 on the left rail). That's where you upload your resume to test ATS score and keyword matching. Would you like me to highlight it or take you right to the upload area?";
+      } 
+      // Question 1: "I'm not able to find ATS Checker. Can you help me?"
+      else if (lower.includes('ats') || lower.includes('applicant tracking') || lower.includes('shortlist') || lower.includes('score my resume') || lower.includes('resume score') || lower.includes('compatibility')) {
+        matchedKey = 'ats';
+        confidence = '99% Direct Match';
+      } 
+      // Question 3: "I want to find jobs suitable for my skills."
+      else if (lower.includes('job') || lower.includes('internship') || lower.includes('hiring') || lower.includes('career') || lower.includes('apply')) {
+        matchedKey = 'jobs';
+        confidence = '98% Direct Match';
+      } 
+      // Question 4: "How do I access the AI Interview feature?"
+      else if (lower.includes('interview') || lower.includes('mock') || lower.includes('practise') || lower.includes('practice') || lower.includes('behavioral') || lower.includes('hr round')) {
+        matchedKey = 'interview';
+        confidence = '99% Direct Match';
+      } 
+      // Question 5: "Where can I find my courses and webinars?"
+      else if ((lower.includes('course') && lower.includes('webinar')) || lower.includes('webinar')) {
+        matchedKey = 'courses';
+        confidence = '98% Direct Match';
+        customIntent = 'Locate enrolled courses & live webinars';
+        customExplanation = "You can find your <strong>JBP Courses</strong> (5th icon: Graduation Cap 🎓) and <strong>Webinars & Events</strong> (6th icon: Video Camera 📹) on the left sidebar. Would you like me to highlight JBP Courses or take you there?";
+      } 
+      else if (lower.includes('course') || lower.includes('jbp') || lower.includes('bootcamp') || lower.includes('lesson')) {
+        matchedKey = 'courses';
+        confidence = '97% Direct Match';
+      } 
+      else if (lower.includes('builder') || lower.includes('create resume') || lower.includes('edit resume') || lower.includes('make resume')) {
+        matchedKey = 'resume';
+        confidence = '96% Intent Match';
+      } 
+      else if (lower.includes('mentor') || lower.includes('connect') || lower.includes('alumni')) {
+        matchedKey = 'connect';
+        confidence = '95% Match';
+      } 
+      else {
+        renderFallbackBubble(q);
+        return;
+      }
+
+      const feature = { ...PREPFREE_REGISTRY[matchedKey] };
+      if (customExplanation) feature.explanationText = customExplanation;
+      if (customIntent) feature.intentSummary = customIntent;
+
+      renderAssistantResponse(feature, confidence);
+    }
+
+    function renderAssistantResponse(feature, confidence) {
+      const g = document.createElement('div');
+      g.className = 'msg-group assistant';
+
+      g.innerHTML = `
+        <div class="msg-bubble">
+          ${feature.explanationText}
+        </div>
+
+        <div class="intent-card-dark">
+          <div class="intent-header-dark">
+            <span class="intent-label-tag">Recognized Intent: ${feature.intentSummary}</span>
+            <span class="confidence-pill">${confidence}</span>
+          </div>
+
+          <div class="intent-prop">
+            <span class="prop-name">Destination:</span>
+            <span class="prop-val">${feature.name}</span>
+          </div>
+
+          <div class="intent-prop">
+            <span class="prop-name">Navigation Path:</span>
+            <span class="path-token">${feature.navPath}</span>
+          </div>
+
+          <div class="chat-action-row">
+            <button type="button" class="btn-chat-highlight" onclick="triggerSpotlight('${feature.id}')">
+              <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <span>Highlight in menu</span>
+            </button>
+
+            <button type="button" class="btn-chat-nav" onclick="executeGuidedNav('${feature.id}')">
+              <span>Take me to ${feature.name}</span>
+              <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+          </div>
+
+          <div style="font-size: 10.5px; color: #64748b; margin-top: 8px; display:flex; align-items:center; gap:5px;">
+            <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <span>Safe Navigation: Assistant only directs your screen. It never uploads or edits without consent.</span>
+          </div>
+        </div>
+
+        <span class="msg-time">PrepFree AI · Just now</span>
+      `;
+
+      chatBody.appendChild(g);
+      scrollChat();
+    }
+
+    function renderFallbackBubble(q) {
+      const g = document.createElement('div');
+      g.className = 'msg-group assistant';
+      g.innerHTML = `
+        <div class="msg-bubble">
+          I'm not sure which feature matches <em>"${escapeHtml(q)}"</em>. Because PrepFree uses an icon-only left menu, you can ask me to locate:
+          <br><br>
+          • <strong>ATS Checker (4th icon 🔄)</strong><br>
+          • <strong>Resume Builder (3rd icon 📄)</strong><br>
+          • <strong>Jobs & Internships (2nd icon 💼)</strong><br>
+          • <strong>AI Mock Interview (8th icon 💻)</strong><br>
+          • <strong>JBP Courses (5th icon 🎓)</strong>
+        </div>
+        <span class="msg-time">PrepFree AI · Just now</span>
+      `;
+      chatBody.appendChild(g);
+      scrollChat();
+    }
+
+    /* Step 4: Visual Guidance & Spotlight on the Icon Rail */
+    function triggerSpotlight(featureId) {
+      clearSpotlight();
+      const feature = PREPFREE_REGISTRY[featureId];
+      if (!feature) return;
+
+      activeSpotlightKey = featureId;
+      const targetBtn = document.getElementById(feature.railButtonId);
+      if (!targetBtn) return;
+
+      spotlightBackdrop.classList.add('active');
+      targetBtn.classList.add('spotlight-active');
+
+      const rect = targetBtn.getBoundingClientRect();
+      spotlightTooltip.style.top = `${rect.top}px`;
+      spotlightTooltip.style.left = `${rect.right + 12}px`;
+
+      document.getElementById('tooltipTitle').innerHTML = `${feature.name}`;
+      document.getElementById('tooltipBadge').textContent = feature.badge;
+      document.getElementById('tooltipDesc').textContent = feature.description;
+      spotlightTooltip.style.display = 'block';
+
+      const infoBubble = document.createElement('div');
+      infoBubble.className = 'msg-group assistant';
+      infoBubble.innerHTML = `
+        <div class="msg-bubble" style="background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.35); color: #34d399;">
+          ✨ Look at your left menu! I've spotlighted the <strong>${feature.name}</strong> icon for you. Click "Take me there" on the tooltip whenever you're ready!
+        </div>
+      `;
+      chatBody.appendChild(infoBubble);
+      scrollChat();
+    }
+
+    function clearSpotlight() {
+      if (activeSpotlightKey) {
+        const feature = PREPFREE_REGISTRY[activeSpotlightKey];
+        if (feature) {
+          const btn = document.getElementById(feature.railButtonId);
+          if (btn) btn.classList.remove('spotlight-active');
+        }
+      }
+      activeSpotlightKey = null;
+      spotlightBackdrop.classList.remove('active');
+      spotlightTooltip.style.display = 'none';
+    }
+
+    function executeGuidedNavFromTooltip() {
+      if (activeSpotlightKey) {
+        executeGuidedNav(activeSpotlightKey);
+      }
+    }
+
+    /* Step 5: Guided Navigation */
+    function executeGuidedNav(featureId) {
+      clearSpotlight();
+      const feature = PREPFREE_REGISTRY[featureId];
+      if (!feature) return;
+
+      navigateTo(feature.targetView);
+
+      if (feature.id === 'ats') {
+        const banner = document.getElementById('atsArrivalBanner');
+        if (banner) {
+          banner.style.display = 'flex';
+          banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+
+      const successBubble = document.createElement('div');
+      successBubble.className = 'msg-group assistant';
+      successBubble.innerHTML = `
+        <div class="msg-bubble" style="background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.4); color: #a7f3d0;">
+          🚀 <strong>Consent confirmed:</strong> Navigated you to <strong>${feature.name}</strong>.
+          <br><br>
+          ${feature.destinationGuidance}
+        </div>
+        <span class="msg-time">PrepFree AI · Just now</span>
+      `;
+      chatBody.appendChild(successBubble);
+      scrollChat();
+    }
+
+    function navigateTo(viewId) {
+      activePage = viewId;
+
+      document.querySelectorAll('.rail-btn').forEach(b => b.classList.remove('active'));
+      const activeRailBtn = document.getElementById(`rail-${viewId}`);
+      if (activeRailBtn) activeRailBtn.classList.add('active');
+
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      const targetSec = document.getElementById(`view-${viewId}`);
+      if (targetSec) targetSec.classList.add('active');
+
+      const registryItem = PREPFREE_REGISTRY[viewId];
+      activeBreadcrumbText.textContent = registryItem ? registryItem.breadcrumb : (viewId.charAt(0).toUpperCase() + viewId.slice(1));
+
+      document.getElementById('viewportScroll').scrollTop = 0;
+    }
+
+    function resetConversation() {
+      clearSpotlight();
+      chatBody.innerHTML = `
+        <div class="msg-group assistant">
+          <div class="msg-bubble">
+            👋 <strong>Conversation reset.</strong> What can I help you find on PrepFree? Ask about ATS Checker, Resume Builder, Jobs, Interviews, or Courses.
+          </div>
+          <span class="msg-time">PrepFree AI · Just now</span>
+        </div>
+      `;
+      chatPromptField.value = '';
+      chatPromptField.focus();
+    }
+
+    /* ATS Interactive Handlers */
+    function handleFileChosen(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        document.getElementById('uploadHeader').textContent = `Uploaded: ${file.name}`;
+        document.getElementById('uploadSubHeader').textContent = `${(file.size / (1024*1024)).toFixed(2)} MB · Ready for ATS parsing`;
+        updateScore(89, "Strong Keyword Alignment · 89%");
+      }
+    }
+
+    function loadSampleResume() {
+      document.getElementById('uploadHeader').textContent = `Uploaded: Rahul_Sharma_FullStack.pdf`;
+      document.getElementById('uploadSubHeader').textContent = `1.2 MB · 2 pages · Standard single-column format`;
+      updateScore(84, "Strong ATS Match · 84%");
+    }
+
+    function updateScore(score, statusText) {
+      const circle = document.querySelector('.score-circle-dark');
+      circle.style.background = `conic-gradient(#10b981 0% ${score}%, #1e2838 ${score}% 100%)`;
+      document.getElementById('scoreValueText').textContent = `${score}%`;
+      document.getElementById('scoreStatusHeading').textContent = statusText;
+    }
+  </script>
+</body>
+</html>
