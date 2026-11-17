@@ -5,7 +5,14 @@
 
 ---
 
-## 🚀 Live Demo & Quick Start
+## 🌐 Live Interactive Demo
+👉 **Live Prototype Link:** [https://preethibk20.github.io/ai_navigator_assistant/](https://preethibk20.github.io/ai_navigator_assistant/)
+
+Experience the full 5-step journey directly in your browser with zero installation required!
+
+---
+
+## 🚀 Local Quick Start
 Open `index.html` or `AI_Navigation_Assistant_Prototype.html` directly in any web browser, or serve it locally:
 ```bash
 python -m http.server 8085
